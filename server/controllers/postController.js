@@ -38,6 +38,51 @@ exports.getPostById = async (req, res, next) => {
   }
 };
 
+// Get comments for a post
+exports.getComments = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('comments.user', 'username');
+    if (!post) {
+      const error = new Error('Post not found');
+      error.statusCode = 404;
+      return next(error);
+    }
+    res.json(post.comments);
+  } catch (err) {
+    const error = new Error(err.message);
+    error.statusCode = 500;
+    next(error);
+  }
+};
+
+// Add a comment to a post
+exports.addComment = async (req, res, next) => {
+  try {
+    const { content } = req.body;
+    if (!content) {
+      const error = new Error('Content is required');
+      error.statusCode = 400;
+      return next(error);
+    }
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      const error = new Error('Post not found');
+      error.statusCode = 404;
+      return next(error);
+    }
+    post.comments.push({ user: req.user.id, content });
+    await post.save();
+    // populate the latest comment's user before returning
+    const latestComment = post.comments[post.comments.length - 1];
+    await latestComment.populate('user', 'username');
+    res.status(201).json(latestComment);
+  } catch (err) {
+    const error = new Error(err.message);
+    error.statusCode = 500;
+    next(error);
+  }
+};
+
 exports.createPost = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

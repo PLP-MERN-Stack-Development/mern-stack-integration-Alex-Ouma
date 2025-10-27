@@ -20,4 +20,8 @@ router.put('/:id', auth, upload.single('image'), [
 ], postController.updatePost);
 router.delete('/:id', auth, postController.deletePost);
 
+// Comments routes on posts
+router.get('/:id/comments', postController.getComments);
+router.post('/:id/comments', auth, postController.addComment);
+
 module.exports = router;

@@ -38,7 +38,7 @@ const PostList = () => {
           <p>{post.content.substring(0, 100)}...</p>
           <p>Category: {post.category?.name}</p>
           <p>Author: {post.author?.username}</p>
-          {post.image && <img src={`/Uploads/${post.image}`} alt={post.title} className="mt-2 max-w-full h-auto" />}
+          {post.image && <img src={`/uploads/${post.image}`} alt={post.title} className="mt-2 max-w-full h-auto" />}
         </div>
       ))}
       <div className="flex space-x-4 mt-4">

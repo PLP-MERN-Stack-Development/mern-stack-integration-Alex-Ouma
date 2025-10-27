@@ -16,7 +16,7 @@ const SinglePost = () => {
       try {
         const [postData, commentData] = await Promise.all([
           request('get', `/posts/${id}`),
-          request('get', `/comments/${id}`),
+          request('get', `/posts/${id}/comments`),
         ]);
         setPost(postData);
         setComments(commentData);
@@ -30,7 +30,7 @@ const SinglePost = () => {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     try {
-      const newComment = await request('post', '/comments', { content: commentContent, postId: id });
+  const newComment = await request('post', `/posts/${id}/comments`, { content: commentContent });
       setComments([...comments, newComment]);
       setCommentContent('');
     } catch (err) {
@@ -44,8 +44,8 @@ const SinglePost = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl">{post.title}</h1>
-      {post.image && <img src={`/Uploads/${post.image}`} alt={post.title} className="my-4 max-w-full h-auto" />}
+  <h1 className="text-2xl">{post.title}</h1>
+  {post.image && <img src={`/uploads/${post.image}`} alt={post.title} className="my-4 max-w-full h-auto" />}
       <p>{post.content}</p>
       <p>Category: {post.category?.name}</p>
       <p>Author: {post.author?.username}</p>
