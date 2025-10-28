@@ -55,18 +55,26 @@ app.use((err, req, res, next) => {
 });
 
 // Connect to MongoDB and start server
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
+const connectDB = require('./config/db');
+
+const startServer = async () => {
+  try {
+    if (!process.env.MONGODB_URI && !process.env.MONGO_URI) {
+      console.error('Missing MongoDB connection string. Set MONGODB_URI in your environment.');
+      process.exit(1);
+    }
+    await connectDB();
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-  })
-  .catch((err) => {
-    console.error('Failed to connect to MongoDB', err);
+  } catch (err) {
+    console.error('Failed to start server', err);
     process.exit(1);
-  });
+  }
+};
+
+startServer();
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {

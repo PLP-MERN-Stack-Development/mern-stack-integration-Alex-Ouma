@@ -38,8 +38,10 @@ exports.login = async (req, res, next) => {
       error.statusCode = 401;
       return next(error);
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  // Return token and user (without password) so client can store both
+  const userSafe = { _id: user._id, username: user.username };
+  res.json({ token, user: userSafe });
   } catch (err) {
     const error = new Error(err.message);
     error.statusCode = 500;
